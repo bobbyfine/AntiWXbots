@@ -4,7 +4,7 @@ from wxpy import *
 
 import sys
 import time
-
+import re
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -115,13 +115,15 @@ def monitor(): #监视器,监视bot加群行为并自动将其踢出群外
         @bot1.register(chats=chat_list)
         def print_msg(msg):
             msg_str = str(msg);
-            print(msg);
-            a1 = msg_str.split(':')
+            a1 = msg_str.split(':');
             group_name = a1[0].strip(' ');
             print(group_name);
-            username = str(msg.text.decode('utf-8')).split('"');
-            user_name = str(username[1].decode('utf-8'));
-            print(user_name);
+
+
+            pattern = re.compile('"(.*)"');
+            user_name = str(msg.raw['Content'].decode('utf-8'));
+            temp_a = pattern.findall(user_name);
+            user_name = temp_a[0];
             if(user_name in black_list):
                 remove_member_from_group(group_name,user_name);
 
